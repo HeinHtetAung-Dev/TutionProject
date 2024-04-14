@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
+using OldQuestionProject;
 using OldQuestionProject.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
+builder.Services.AddDbContext<AppDBContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")!);
+},
+ServiceLifetime.Transient,
+ServiceLifetime.Transient);
 
 var app = builder.Build();
 
