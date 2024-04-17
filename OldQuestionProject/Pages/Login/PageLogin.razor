@@ -1,12 +1,15 @@
 ﻿@page "/Login"
 @inject AppDBContext _db
 @inherits LayoutComponentBase
-style{
-
-}
-    background-image: url('../tutionPhoto.jpg');
+<style>
+    body {
+        background-image: url('/Image/tutionPhoto.jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
+        background-size: cover; /* Adjust the image size to cover the entire background */
+        /* Add more CSS properties as needed */
+    }
+</style>
 <br /><br /><br />
-<div class="container" style="background-image: url('~/tutionPhoto.jpg'); background-size: cover;">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
