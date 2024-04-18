@@ -1,43 +1,43 @@
 ﻿@page "/Login"
 @inject AppDBContext _db
 @inherits LayoutComponentBase
-<h3>Blog</h3>
-<form method="post">
-    <form>
-        <!-- Email input -->
-        <div align="center"  data-mdb-input-init class="form-outline mb-4">
-            <input type="email" id="form2Example1" class="form-control" />
-            <label class="form-label" for="form2Example1">Email address</label>
-        </div>
-
-        <!-- Password input -->
-        <div data-mdb-input-init class="form-outline mb-4">
-            <input type="password" id="form2Example2" class="form-control" />
-            <label class="form-label" for="form2Example2">Password</label>
-        </div>
-
-            <div class="col">
-                <!-- Simple link -->
-                <a href="#!">Forgot password?</a>
+<style>
+    body {
+        background-image: url('/Image/tutionPhoto.jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
+        background-size: cover; /* Adjust the image size to cover the entire background */
+        /* Add more CSS properties as needed */
+    }
+</style>
+<br /><br /><br />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Login</h2>
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary" @onclick="Login">Login</button>
+                    </form>
+                </div>
             </div>
-
-        <!-- Submit button -->
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4" @onclick="Login">Sign in</button>
-
-        <!-- Register buttons -->
-        <div class="text-center">
-            <p>Not a member? <a href="#!">Register</a></p>
         </div>
-    </form>
-</form>
+    </div>
+</div>
 
 @code {
-    UsersModel RequestModel = new();
 
-    private async Task Login()
+    private void Login()
     {
-        UsersModel usersModel = new();
-        RequestModel = usersModel;
+
     }
 }
 
