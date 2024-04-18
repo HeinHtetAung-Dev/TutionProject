@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using TutionProject.OldQuestionProject.Models;
 
@@ -13,5 +14,7 @@ namespace OldQuestionProject
 
         public DbSet<LoginModel> Blog { get; set; }
         public DbSet<UsersModel> User { get; set; }
+        
+        private string _id = Guid.NewGuid().ToString();
     }
 }
