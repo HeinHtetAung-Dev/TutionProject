@@ -1,14 +1,20 @@
 ﻿@page "/Login"
 @inject AppDBContext _db
+@inject IJSRuntime JSRuntime
+@inject SweetAlertService Swal
 @inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
 <style>
     body {
-        background-image: url('/Image/tutionPhoto.jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
-        background-size: cover; /* Adjust the image size to cover the entire background */
-        /* Add more CSS properties as needed */
+        background-image: url('/Image/tutionPhoto.jpg');
+        background-size: cover;
     }
 </style>
-<br /><br /><br />
+
+<br />
+<br />
+<br />
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -18,14 +24,15 @@
                     <form method="post">
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <input type="text" class="form-control" id="username" name="username" required @bind="User.UserName">
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" required @bind="User.Password">
                         </div>
                         <br />
-                        <button type="submit" class="btn btn-primary" @onclick="Login">Login</button>
+                        <button type="button" class="btn btn-primary" @onclick="Login">Login</button>
+                        <a href="/CreateUser" target="_blank">Create User</a>
                     </form>
                 </div>
             </div>
@@ -34,10 +41,21 @@
 </div>
 
 @code {
+    public string? ConfirmPassword { get; set; }
+    UsersModel User = new();
 
-    private void Login()
+    private async Task Login()
     {
+        List<UsersModel> checkUser = _db.User.Where(x => x.UserName == User.UserName && x.Password == User.Password).ToList();
 
+        if (checkUser.Count > 0)
+        {
+            await JSRuntime.InvokeVoidAsync("Swal.fire", "Login Successfully!", "", "success");
+            NavigationManager.NavigateTo("/Menu");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("Swal.fire", "Please check username and password!", "", "error");
+        }
     }
 }
-

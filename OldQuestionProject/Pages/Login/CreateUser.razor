@@ -1,0 +1,89 @@
+﻿@page "/CreateUser"
+@inject AppDBContext _db
+@inject IJSRuntime JSRuntime
+@inject SweetAlertService Swal
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+<style>
+    body {
+        background-image: url('/Image/tutionPhoto.jpg');
+        background-size: cover;
+    }
+</style>
+
+<br />
+<br />
+<br />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Create User</h2>
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required @bind="User.UserName">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required @bind="User.Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" required @bind="ConfirmPassword">
+                        </div>
+                        <br />
+                        <button type="button" class="btn btn-primary" @onclick="Create">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public string? ConfirmPassword { get; set; }
+    UsersModel User = new();
+
+    private async Task Create()
+    {
+        if (User.Password != ConfirmPassword)
+        {
+            await JSRuntime.InvokeVoidAsync("Swal.fire", "Passwords do not match!", "", "error");
+        }
+        else
+        {
+            // Call method to create user or perform other actions
+            List<UsersModel> checkUser = _db.User.Where(x=> x.UserName == User.UserName && x.Password == User.Password).ToList();
+
+            if (checkUser.Count > 0)
+                await JSRuntime.InvokeVoidAsync("Swal.fire", "Please use another username and password!", "", "error");
+            else
+            {
+                await _db.User.AddAsync(User);
+                int result  = await _db.SaveChangesAsync();
+                string Message = result > 0 ? "User create successfully! ":"User create fail! ";
+                if(result > 0)
+                {
+                    await JSRuntime.InvokeVoidAsync("Swal.fire", "User create successfully!", "", "success");
+                    NavigationManager.NavigateTo("/Login");
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("Swal.fire", "User create fail!", "", "error");
+                }
+
+            }
+
+        }
+    }
+
+    // protected override Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     NavigationManager.NavigateTo("/Login");
+
+    //     return base.OnAfterRenderAsync(firstRender);
+    // }
+}

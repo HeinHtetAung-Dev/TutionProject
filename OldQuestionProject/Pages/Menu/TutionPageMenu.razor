@@ -1,0 +1,104 @@
+﻿@page "/Menu"
+@inject AppDBContext _dbMenu
+@inject IJSRuntime JSRuntime
+@inject SweetAlertService Swal
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+<style>
+    body {
+        background-image: url('');
+        background-size: cover;
+        background-color: azure;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column flex-md-row">
+                        <div>
+                            <label for="Grade">Grade</label>
+                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="GradeDDL" style="width:150px;">
+                                @if (GradeLs is not null)
+                                {
+                                    @foreach (var item in GradeLs)
+                                    {
+                                        <option value=@item.Item>@item.Descr</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        &nbsp;&nbsp;
+                        <div>
+                            <label for="Subject">Subject</label>
+                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="SubjectDDL" style="width:150px;">
+                                @if (SubjectLs is not null)
+                                {
+                                    @foreach (var Subitem in SubjectLs)
+                                    {
+                                        <option value=@Subitem.Item>@Subitem.Descr</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        &nbsp;&nbsp;
+                        <div>
+                            <label for="Type">Type</label>
+                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="TypeDDL" style="width:150px;">
+                                
+                                @if (TypeLs is not null)
+                                {
+                                    @foreach (var Typeitem in TypeLs)
+                                    {
+                                        <option value=@Typeitem.Item>@Typeitem.Descr</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div>
+                <label for="Question">1.How can I help you ...............................................................................................................?</label><br />&nbsp; &nbsp;
+                <input type="checkbox" id="option1" name="option1" value="option1">
+                <label for="option1">Option 1</label> &nbsp; &nbsp;
+                <input type="checkbox" id="option2" name="option2" value="option2">
+                <label for="option2">Option 2</label> &nbsp; &nbsp;
+                <input type="checkbox" id="option3" name="option3" value="option3">
+                <label for="option3">Option 3</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    OQHeadModel OQ = new();
+    List<ListdetlModel>? GradeLs;
+    List<ListdetlModel>? TypeLs;
+    List<ListdetlModel>? SubjectLs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await List();
+
+    }
+
+    public async Task List()
+    {
+        GradeLs = await _dbMenu.List.Where(x => x.Code == "Grade").ToListAsync();
+        TypeLs = await _dbMenu.List.Where(x => x.Code == "Type").ToListAsync();
+        SubjectLs = await _dbMenu.List.Where(x => x.Code == "Subject").ToListAsync();
+    }
+
+
+}
+
