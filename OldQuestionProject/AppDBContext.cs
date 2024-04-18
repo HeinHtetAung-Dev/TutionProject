@@ -16,5 +16,7 @@ namespace OldQuestionProject
         public DbSet<UsersModel> User { get; set; }
         
         private string _id = Guid.NewGuid().ToString();
+
+        private string _id2 = Guid.NewGuid().ToString();
     }
 }
