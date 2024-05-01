@@ -25,7 +25,7 @@
                     <div class="d-flex flex-column flex-md-row">
                         <div>
                             <label for="Grade">Grade</label>
-                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="GradeDDL" style="width:150px;">
+                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="GradeDDL" style="width:150px;" @bind="SelectedGrade">
                                 @if (GradeLs is not null)
                                 {
                                     @foreach (var item in GradeLs)
@@ -38,7 +38,7 @@
                         &nbsp;&nbsp;
                         <div>
                             <label for="Subject">Subject</label>
-                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="SubjectDDL" style="width:150px;">
+                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="SubjectDDL" style="width:150px;" @bind="SelectedSubject">
                                 @if (SubjectLs is not null)
                                 {
                                     @foreach (var Subitem in SubjectLs)
@@ -51,8 +51,8 @@
                         &nbsp;&nbsp;
                         <div>
                             <label for="Type">Type</label>
-                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="TypeDDL" style="width:150px;">
-                                
+                            <select class="form-select form-select-sm sm-3" aria-label="small select example" id="TypeDDL" style="width:150px;" @bind="SelectedType">
+
                                 @if (TypeLs is not null)
                                 {
                                     @foreach (var Typeitem in TypeLs)
@@ -62,29 +62,61 @@
                                 }
                             </select>
                         </div>
+                        <br />
+                        <div>
+                            <br />
+                            <br /><br />
+                            &nbsp;&nbsp;<button type="button" class="btn btn-secondary" @onclick="Search">Search</button>
+                        </div>
+
                     </div>
                 </div>
             </div>
             <br />
-            <div>
-                <label for="Question">1.How can I help you ...............................................................................................................?</label><br />&nbsp; &nbsp;
-                <input type="checkbox" id="option1" name="option1" value="option1">
-                <label for="option1">Option 1</label> &nbsp; &nbsp;
-                <input type="checkbox" id="option2" name="option2" value="option2">
-                <label for="option2">Option 2</label> &nbsp; &nbsp;
-                <input type="checkbox" id="option3" name="option3" value="option3">
-                <label for="option3">Option 3</label>
-            </div>
+            @if (OQ is not null)
+            {
+                int count = 0;
+                @foreach (var item in OQ)
+                {
+                    int labelcount = count+1;
+                    <div>
+                        <label for="Question">@(++count). @item.Question </label><br />&nbsp; &nbsp;
+                        
+                        <label for="A">A</label> &nbsp; &nbsp;
+                        <label for="AA">@item.Usrdef01</label> &nbsp; &nbsp;
+                        <label for="B">B</label> &nbsp; &nbsp;
+                        <label for="BA">@item.Usrdef02</label> &nbsp; &nbsp;
+                        <label for="C">C</label> &nbsp; &nbsp;
+                        <label for="CA">@item.Usrdef03</label> &nbsp; &nbsp;
+                        <label for="D">D</label> &nbsp; &nbsp;
+                        <label for="DA">@item.Usrdef04</label><br />
+
+                        <input type="checkbox" checked="@isChecked" @onchange="()=>CheckboxChanged(labelcount)" />
+                        <label>Show Result: </label>
+                        <label name="@($"input{count}")" style="@(ShouldShowLabel($"input{count}") ? "display: block;" : "display: none;")">The result is: Your Result @(++count)</label>
+                    </div>
+                }
+            }
+
         </div>
     </div>
 </div>
 
 
 @code {
-    OQHeadModel OQ = new();
+    private string? SelectedGrade { get; set; }
+
+    private string? SelectedSubject { get; set; }
+    private string? SelectedType { get; set; }
+    private bool isChecked = false;
+    private bool? Checked;
+    private bool Fir = false;
+    private string? LblCount;
+    private bool isVisible = false;
     List<ListdetlModel>? GradeLs;
     List<ListdetlModel>? TypeLs;
     List<ListdetlModel>? SubjectLs;
+    List<OQHeadModel>? OQ;
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,8 +129,28 @@
         GradeLs = await _dbMenu.List.Where(x => x.Code == "Grade").ToListAsync();
         TypeLs = await _dbMenu.List.Where(x => x.Code == "Type").ToListAsync();
         SubjectLs = await _dbMenu.List.Where(x => x.Code == "Subject").ToListAsync();
+        // Initialize OQ to an empty list
+        OQ = new List<OQHeadModel>();
     }
 
+    public async Task Search()
+    {
+        // Your logic to fetch OQ based on selected options
+        OQ = await _dbMenu.OQ.Where(x => x.Grade == SelectedGrade && x.Subject == SelectedSubject && x.Type == SelectedType).ToListAsync();
+    }
+
+    private void CheckboxChanged(int Count)
+    {
+        string LabelName = "input" + Count;
+        ShouldShowLabel(LabelName);
+    }
+
+    private bool ShouldShowLabel(string labelName)
+    {
+
+        return labelName == "input1";
+    }
 
 }
+
 

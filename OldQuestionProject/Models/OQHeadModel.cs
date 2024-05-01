@@ -14,7 +14,7 @@ namespace OldQuestionProject.Models
     public class OQHeadModel
     {
         [Key]
-        public int Id { get; set; }
+        public int OQId { get; set; }
         public string? Question { get; set; }
         public string? Answer { get; set; }
         public string? Subject { get; set; }
