@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
         
-    ame: Publish Project
+    name: Publish Project
         run: dotnet publish -c Release -o ./publish
 
       - name: Deploy via FTP
