@@ -27,8 +27,8 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4
         with:
-          server: 192.168.3.109
-          username: YOUR_FTP_USERNAME
-          password: YOUR_FTP_PASSWORD
+          server: 192.168.3.108
+          username: ftpuser
+          password: 123
           local-dir: ./publish/
-          server-dir: /inetpub/wwwroot/MyAspNetApp/
+          server-dir: D:\For Hein business\TutionProject
