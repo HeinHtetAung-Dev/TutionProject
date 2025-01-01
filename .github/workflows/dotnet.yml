@@ -1,45 +1,66 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+name: .NET 7 CI Workflow
 
-name: .NET
-
+# Define events that trigger this workflow
 on:
   push:
-    branches: [ "master" ]
+    branches: 
+      - "main"  # Run when pushing to the main branch (adjust to your default branch if needed)
   pull_request:
-    branches: [ "master" ]
-  types: [opened, edited, reopened, synchronize]
-  
+    branches:
+      - "main"  # Run when a pull request is made to the main branch (adjust if needed)
+    types: 
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+# Define concurrency settings to avoid multiple runs for the same branch at the same time
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Define environment variables
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
 jobs:
   build:
-    name: Build
+    name: Build and Test .NET 7 Project
     strategy:
       matrix:
-        dotnet-version: ["8.0.x", "7.0.x", "6.0.x"]
+        # Test on different operating systems
         os: ["ubuntu-latest", "windows-latest"]
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}  # Define the runner OS dynamically from the matrix
 
-  - uses: actions/checkout@v4
-  name: Checkout
-  with:
-    fetch-depth: 0
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for accurate versioning, coverage, etc.
 
-- name: Setup dotnet ${{ matrix.dotnet-version }}
-  uses: actions/setup-dotnet@v4
-  with:
-    dotnet-version: ${{ matrix.dotnet-version }}
-    cache: true
-    cache-dependency-path: "**/packages.lock.json"
+      # Step 2: Set up .NET 7 SDK
+      - name: Setup .NET 7
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "7.0.x"  # Specify the .NET version (in this case, .NET 7)
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"  # Cache NuGet dependencies if packages.lock.json exists
 
-   - name: Restore dependencies
-  run: dotnet restore --no-cache --disable-parallel --verbosity minimal
+      # Step 3: Restore project dependencies
+      - name: Restore dependencies
+        run: dotnet restore --no-cache --disable-parallel --verbosity minimal
 
-    - name: Build
-  run: dotnet build --configuration Release --no-restore
-      
+      # Step 4: Build the project (no restore since it's already done)
+      - name: Build the project
+        run: dotnet build --configuration Release --no-restore
+
+      # Step 5: Run tests and collect code coverage (optional)
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+      # Optional Step: Upload code coverage (e.g., using Codecov or a similar service)
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/*/coverage.cobertura.xml  # Adjust path to match your coverage format
