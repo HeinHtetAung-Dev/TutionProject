@@ -1,66 +1,28 @@
-name: .NET 7 CI Workflow
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-# Define events that trigger this workflow
+name: .NET
+
 on:
   push:
-    branches: 
-      - "main"  # Run when pushing to the main branch (adjust to your default branch if needed)
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - "main"  # Run when a pull request is made to the main branch (adjust if needed)
-    types: 
-      - opened
-      - edited
-      - reopened
-      - synchronize
-
-# Define concurrency settings to avoid multiple runs for the same branch at the same time
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-# Define environment variables
-env:
-  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    branches: [ "main" ]
 
 jobs:
   build:
-    name: Build and Test .NET 7 Project
-    strategy:
-      matrix:
-        # Test on different operating systems
-        os: ["ubuntu-latest", "windows-latest"]
-    runs-on: ${{ matrix.os }}  # Define the runner OS dynamically from the matrix
+
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository code
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Fetch full history for accurate versioning, coverage, etc.
-
-      # Step 2: Set up .NET 7 SDK
-      - name: Setup .NET 7
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "7.0.x"  # Specify the .NET version (in this case, .NET 7)
-          cache: true
-          cache-dependency-path: "**/packages.lock.json"  # Cache NuGet dependencies if packages.lock.json exists
-
-      # Step 3: Restore project dependencies
-      - name: Restore dependencies
-        run: dotnet restore --no-cache --disable-parallel --verbosity minimal
-
-      # Step 4: Build the project (no restore since it's already done)
-      - name: Build the project
-        run: dotnet build --configuration Release --no-restore
-
-      # Step 5: Run tests and collect code coverage (optional)
-      - name: Run tests
-        run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
-
-      # Optional Step: Upload code coverage (e.g., using Codecov or a similar service)
-      - name: Upload Code Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage/*/coverage.cobertura.xml  # Adjust path to match your coverage format
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
