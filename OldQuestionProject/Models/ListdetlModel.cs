@@ -26,7 +26,6 @@ namespace OldQuestionProject.Models
         public string? Usrdef06 { get; set; }
 
         public string? Usrdef07 { get; set; }
-        public string? Usrdef08 { get; set; }
         public string? Usrdef09 { get; set; }
     }
 }
