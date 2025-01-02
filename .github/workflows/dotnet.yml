@@ -42,9 +42,4 @@ code-scanning:
           java-version: 17
           distribution: 'zulu'
 
-      - uses: actions/checkout@v4
-        name: Checkout
-        with:
-          fetch-depth: 0
-
       
